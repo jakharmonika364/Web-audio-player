@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Music Player</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="app">
+    <header class="topbar">
+      <h1>Music Player</h1>
+      <div class="top-actions">
+        <a id="playerChip" class="chip active" href="index.html">Player</a>
+        <a id="libraryChip" class="chip" href="library.html">Library</a>
+      </div>
+    </header>
+
+    <main class="content" id="playerView">
+      <aside class="sidebar">
+        <div class="sidebar-head">
+          <div class="sidebar-title">
+            <span class="icon">🎵</span>
+            <span>Playlist</span>
+          </div>
+          <button id="createPlaylist" class="icon-btn" title="New playlist">＋</button>
+        </div>
+        <nav id="playlistList" class="playlist-list">
+          <!-- dynamic items -->
+        </nav>
+      </aside>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2 id="currentPlaylistName">My Favorites</h2>
+          <div>
+            <button id="addSongs" class="btn">
+              <span class="icon">☰</span>
+              Add Songs
+            </button>
+            <input id="filePicker" type="file" accept="audio/*" multiple hidden />
+          </div>
+        </div>
+        <ul id="trackList" class="track-list">
+          <!-- dynamic tracks -->
+        </ul>
+      </section>
+    </main>
+
+    <!-- Library view is on a separate page (library.html) -->
+
+    <footer class="player">
+      <canvas id="visualizer" height="60"></canvas>
+      <div class="timeline" aria-label="Timeline">
+        <div class="time" id="currentTime">0:00</div>
+        <input id="seek" type="range" min="0" max="1000" value="0" />
+        <div class="time" id="duration">0:00</div>
+      </div>
+      <div class="nowbar">
+        <div class="now-left">
+          <img id="cover" class="cover" alt="cover" />
+          <div>
+            <div id="nowTitle" class="title">—</div>
+            <div id="nowArtist" class="artist">—</div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button id="muteBtn" class="icon-btn" title="Mute">🔇</button>
+          <button id="prevBtn" class="icon-btn" title="Previous">⏮</button>
+          <button id="playPauseBtn" class="play">▶</button>
+          <button id="nextBtn" class="icon-btn" title="Next">⏭</button>
+          <button id="repeatBtn" class="icon-btn" title="Repeat">🔁</button>
+        </div>
+
+        <div class="volume">
+          <span>🔊</span>
+          <input id="volume" type="range" min="0" max="1" step="0.01" value="0.7" />
+        </div>
+      </div>
+      <audio id="audio"></audio>
+    </footer>
+  </div>
+  <div id="ctxMenu" class="ctx-menu" role="menu" aria-hidden="true"></div>
+  <div id="snackbar" class="snackbar" role="status" aria-live="polite">
+    <span id="snackbarMsg"></span>
+    <button id="snackbarUndo" class="action">Undo</button>
+  </div>
+  <script src="app.js" defer></script>
+</body>
+
+</html>
