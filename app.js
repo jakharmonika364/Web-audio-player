@@ -5,7 +5,7 @@ const audio = $('audio'), trackListEl = $('trackList'), playlistListEl = $('play
   playBtn = $('playPauseBtn'), prevBtn = $('prevBtn'), nextBtn = $('nextBtn'),
   repeatBtn = $('repeatBtn'), vol = $('volume'), muteBtn = $('muteBtn'),
   seek = $('seek'), curT = $('currentTime'), durT = $('duration'),
-  filePicker = $('filePicker'), addSongsBtn = $('addSongs'),
+  filePicker = $('filePicker'), addSongsBtn = $('addSongs'), createPlaylistBtn = $('createPlaylist'),
   visualizer = $('visualizer'), ctx2d = visualizer?.getContext('2d'),
   playerView = $('playerView'), libraryView = $('libraryView'),
   playerChip = $('playerChip'), libraryChip = $('libraryChip'),
@@ -83,6 +83,7 @@ async function playAt(i) { loadTrack(i); try { await audio.play(); } catch (e) {
 function next() { const pl = playlists.find(p => p.id === curPid); if (!pl || !pl.tracks.length) return; let i = (idx + 1) % pl.tracks.length; if (i === 0 && !isRepeat && idx === pl.tracks.length - 1) return; playAt(i); }
 function prev() { const pl = playlists.find(p => p.id === curPid); if (!pl) return; let i = idx - 1; if (i < 0) i = pl.tracks.length - 1; playAt(i); }
 
+
 vol?.addEventListener('input', () => audio.volume = parseFloat(vol.value));
 seek?.addEventListener('input', () => { if (isFinite(audio.duration)) audio.currentTime = (seek.value / 1000) * audio.duration; });
 muteBtn?.addEventListener('click', () => { audio.muted = !audio.muted; muteBtn.textContent = audio.muted ? '🔇' : '🔊'; });
@@ -90,6 +91,23 @@ playBtn?.addEventListener('click', () => audio.paused ? audio.play() : audio.pau
 nextBtn?.addEventListener('click', next);
 prevBtn?.addEventListener('click', prev);
 repeatBtn?.addEventListener('click', () => { isRepeat = !isRepeat; repeatBtn.style.opacity = isRepeat ? 1 : 0.6; });
+
+createPlaylistBtn?.addEventListener('click', () => {
+  const name = prompt('Enter playlist name:');
+  if (name?.trim()) {
+    const newPlaylist = {
+      id: 'pl_' + Date.now(),
+      name: name.trim(),
+      tracks: []
+    };
+    playlists.push(newPlaylist);
+    curPid = newPlaylist.id;
+    idx = -1;
+    save();
+    renderPlaylists();
+    renderTracks();
+  }
+});
 
 audio.addEventListener('timeupdate', () => { curT.textContent = formatTime(audio.currentTime); durT.textContent = formatTime(audio.duration || 0); if (isFinite(audio.duration)) seek.value = Math.floor((audio.currentTime / audio.duration) * 1000); });
 audio.addEventListener('ended', next);
