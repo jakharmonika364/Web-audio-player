@@ -284,6 +284,25 @@ body {
   margin-top: 8px
 }
 
+.storage-controls {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #1f2937
+}
+
+.storage-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px
+}
+
+.storage-info .mini-btn {
+  font-size: 11px;
+  padding: 6px 8px;
+  text-align: center;
+  white-space: nowrap
+}
+
 .playlist-item {
   display: flex;
   justify-content: space-between;
