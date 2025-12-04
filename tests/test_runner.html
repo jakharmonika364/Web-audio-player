@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Audio Player Tests</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: #121212;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .test-suite {
+            margin-bottom: 20px;
+            border: 1px solid #333;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .test-suite h2 {
+            margin-top: 0;
+            color: #a855f7;
+        }
+
+        .test-case {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .pass {
+            background: rgba(0, 255, 0, 0.1);
+            color: #4ade80;
+        }
+
+        .fail {
+            background: rgba(255, 0, 0, 0.1);
+            color: #f87171;
+        }
+
+        .summary {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Web Audio Player - Test Runner</h1>
+    <div id="results"></div>
+    <div id="summary" class="summary">Running tests...</div>
+
+    <!-- Mocks for DOM elements needed by modules -->
+    <div id="mock-dom" style="display: none;">
+        <div id="playPauseBtn"></div>
+        <div id="prevBtn"></div>
+        <div id="nextBtn"></div>
+        <div id="muteBtn"></div>
+        <div id="repeatBtn"></div>
+        <input id="volume" type="range">
+        <input id="seek" type="range">
+        <div id="currentTime"></div>
+        <div id="duration"></div>
+        <div id="trackList"></div>
+        <div id="libraryGrid"></div>
+        <input id="filePicker" type="file">
+        <div id="addSongs"></div>
+        <div id="nowTitle"></div>
+        <div id="nowArtist"></div>
+        <img id="cover">
+        <div id="snackbar"></div>
+        <div id="snackbarMsg"></div>
+        <div id="createPlaylist"></div>
+        <div id="playlistList"></div>
+        <div id="currentPlaylistName"></div>
+        <div id="importPlaylistBtn"></div>
+        <div id="exportPlaylistBtn"></div>
+        <input id="playlistImportPicker" type="file">
+        <div id="playerView"></div>
+        <div id="libraryView"></div>
+        <div id="navPlayer"></div>
+        <div id="navLibrary"></div>
+        <div id="snackbarUndo"></div>
+        <div id="libPrevBtn"></div>
+        <div id="libNextBtn"></div>
+        <div id="libPageInfo"></div>
+        <select id="languageSelect"></select>
+    </div>
+
+    <script type="module" src="app_test.js"></script>
+</body>
+
+</html>
