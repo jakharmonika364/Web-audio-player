@@ -102,7 +102,7 @@ class App {
             }
         });
 
-        this.eventBus.on('RENAME_TRACK', ({ index, title }) => this.playlistManager.renameTrack(index, title));
+        this.eventBus.on('RENAME_TRACK', ({ ind5ex, title }) => this.playlistManager.renameTrack(index, title));
         this.eventBus.on('REORDER_PLAYLIST', ({ fromIndex, toIndex }) => this.playlistManager.reorderPlaylist(fromIndex, toIndex));
 
         this.eventBus.on('CREATE_PLAYLIST', (name) => this.playlistManager.createPlaylist(name));

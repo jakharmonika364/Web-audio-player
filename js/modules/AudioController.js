@@ -5,7 +5,7 @@ export default class AudioController {
         this.gainNode = this.audioContext.createGain();
         this.analyser = this.audioContext.createAnalyser();
         this.source = null;
-
+        
         this.analyser.fftSize = 2048;
         this.gainNode.connect(this.analyser);
         this.analyser.connect(this.audioContext.destination);
@@ -18,7 +18,7 @@ export default class AudioController {
         this.isMuted = false;
         this.previousVolume = 1;
     }
-
+   
     async load(arrayBuffer) {
         try {
             this.currentBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
@@ -29,7 +29,7 @@ export default class AudioController {
             console.error('Error decoding audio data:', error);
         }
     }
-
+   
     play(offset = 0) {
         if (!this.currentBuffer) return;
 
@@ -41,7 +41,7 @@ export default class AudioController {
         this.source.buffer = this.currentBuffer;
         this.source.connect(this.gainNode);
 
-        // Handle offset for resume/seek
+       
         const startOffset = offset || this.pauseTime;
         this.startTime = this.audioContext.currentTime - startOffset;
 
@@ -81,7 +81,7 @@ export default class AudioController {
         if (wasPlaying) {
             this.play(time);
         } else {
-            // Just update time state if paused
+         
             this.eventBus.emit('SEEK_UPDATE', { time });
         }
     }
@@ -91,7 +91,7 @@ export default class AudioController {
             try {
                 this.source.stop();
             } catch (e) {
-                // Ignore if already stopped
+                
             }
             this.source = null;
         }
