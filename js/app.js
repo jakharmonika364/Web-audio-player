@@ -122,6 +122,7 @@ class App {
 
         this.eventBus.on('SEEK_CHANGED', (time) => this.audioController.seek(time));
         this.eventBus.on('VOLUME_CHANGED', (val) => this.audioController.setVolume(val));
+        this.eventBus.on('SPEED_CHANGED', (rate) => this.audioController.setPlaybackRate(rate));
 
         this.eventBus.on('SHOW_LIBRARY_PICKER', async () => {
             const tracks = await this.storageManager.getAllTracks();

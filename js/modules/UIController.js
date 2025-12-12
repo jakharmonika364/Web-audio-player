@@ -9,6 +9,7 @@ export default class UIController {
             muteBtn: document.getElementById('muteBtn'),
             repeatBtn: document.getElementById('repeatBtn'),
             volumeSlider: document.getElementById('volume'),
+            speedSelect: document.getElementById('speedSelect'),
             seekSlider: document.getElementById('seek'),
             currentTime: document.getElementById('currentTime'),
             duration: document.getElementById('duration'),
@@ -166,6 +167,11 @@ export default class UIController {
             this.elements.volumeSlider.addEventListener('input', (e) => {
                 this.updateVolumeFill();
                 this.eventBus.emit('VOLUME_CHANGED', parseFloat(e.target.value));
+            });
+        }
+        if (this.elements.speedSelect) {
+            this.elements.speedSelect.addEventListener('change', (e) => {
+                this.eventBus.emit('SPEED_CHANGED', parseFloat(e.target.value));
             });
         }
         if (this.elements.seekSlider) {

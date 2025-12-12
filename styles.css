@@ -1169,3 +1169,19 @@ input[hidden] {
 }
 
 
+
+
+.speed-select {
+  background: #1f2937;
+  color: #cbd5e1;
+  border: 1px solid #1f2937;
+  padding: 4px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+  font-size: 12px;
+}
+.speed-select:focus {
+  border-color: #a855f7;
+}
