@@ -1182,6 +1182,7 @@ input[hidden] {
   font-family: inherit;
   font-size: 12px;
 }
+
 .speed-select:focus {
   border-color: #a855f7;
 }
