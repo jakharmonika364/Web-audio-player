@@ -4,132 +4,985 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Music Player</title>
+    <title>Web Audio Player - Offline Music Experience</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="styles.css" />
+    <style>
+        /* Landing Page Specific Styles */
+        .landing-container {
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at 20% -10%, rgba(236, 72, 153, .15), transparent 40%),
+                radial-gradient(900px 600px at 90% -20%, rgba(168, 85, 247, .18), transparent 40%),
+                linear-gradient(180deg, #0a0d12 0%, #0b0e14 100%);
+            color: var(--text);
+            font-family: Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: linear-gradient(45deg, var(--brand-2), var(--brand));
+            border-radius: 50%;
+            opacity: 0;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0% {
+                opacity: 0;
+                transform: translateY(100vh) scale(0);
+            }
+
+            10% {
+                opacity: 0.5;
+            }
+
+            90% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-100vh) scale(1.5);
+            }
+        }
+
+        /* Gradient Orbs */
+        .gradient-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .orb1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--brand-2), transparent);
+            top: -200px;
+            left: -200px;
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        .orb2 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--brand), transparent);
+            bottom: -150px;
+            right: -150px;
+            animation: pulse 8s ease-in-out infinite 2s;
+        }
+
+        .orb3 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.3), transparent);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse 8s ease-in-out infinite 4s;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1) translate(-50%, -50%);
+                opacity: 0.4;
+            }
+
+            50% {
+                transform: scale(1.2) translate(-50%, -50%);
+                opacity: 0.6;
+            }
+        }
+
+        .hero-section {
+            padding: 120px 32px 80px;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-title {
+            font-size: clamp(48px, 8vw, 96px);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--brand-2), var(--brand), #ec4899);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: glow 3s ease-in-out infinite alternate, slideIn 1s ease-out;
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.3));
+            }
+
+            to {
+                filter: drop-shadow(0 0 30px rgba(236, 72, 153, 0.5));
+            }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(18px, 2.5vw, 24px);
+            color: var(--muted);
+            margin-bottom: 48px;
+            font-weight: 400;
+            line-height: 1.6;
+            animation: fadeInUp 1s ease-out 0.3s both;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cta-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 80px;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .cta-primary {
+            background: linear-gradient(180deg, var(--brand-2), var(--brand));
+            color: white;
+            border: none;
+            padding: 18px 36px;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(168, 85, 247, 0.3);
+        }
+
+        .cta-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .cta-primary:hover::before {
+            left: 100%;
+        }
+
+        .cta-primary:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 16px 40px rgba(168, 85, 247, 0.5);
+        }
+
+        .cta-primary:active {
+            transform: translateY(-2px) scale(1.01);
+        }
+
+        .cta-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 18px 36px;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-secondary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.1));
+            transition: width 0.3s ease;
+        }
+
+        .cta-secondary:hover::before {
+            width: 100%;
+        }
+
+        .cta-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--brand);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(168, 85, 247, 0.2);
+        }
+
+        .cta-secondary:active {
+            transform: translateY(-2px) scale(1.01);
+        }
+
+        .features-section {
+            padding: 100px 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .section-title {
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 80px;
+            color: var(--text);
+            background: linear-gradient(135deg, var(--text), var(--muted));
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            margin-bottom: 100px;
+        }
+
+        .feature-card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--brand-2), var(--brand));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            border-color: rgba(168, 85, 247, 0.4);
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+        }
+
+        .feature-icon {
+            font-size: 56px;
+            margin-bottom: 24px;
+            display: block;
+            animation: bounce 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(168, 85, 247, 0.3));
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .feature-title {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text);
+            background: linear-gradient(135deg, var(--text), var(--brand));
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .feature-description {
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .feature-card:hover .feature-description {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .demo-section {
+            padding: 100px 32px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+            max-width: 1200px;
+            margin: 0 auto 100px;
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(20px);
+        }
+
+        .demo-container {
+            background: linear-gradient(180deg, #0f1423, #0e1425);
+            border: 1px solid #0f172a;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+            position: relative;
+            overflow: hidden;
+            transform: perspective(1000px) rotateX(2deg);
+            transition: transform 0.3s ease;
+        }
+
+        .demo-container:hover {
+            transform: perspective(1000px) rotateX(0deg) scale(1.02);
+        }
+
+        .demo-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent);
+            border-radius: 24px 24px 0 0;
+        }
+
+        .demo-container::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+
+        .demo-player {
+            opacity: 0.7;
+            pointer-events: none;
+            transform: scale(0.85);
+            transform-origin: center;
+            transition: opacity 0.3s ease;
+        }
+
+        .demo-container:hover .demo-player {
+            opacity: 0.9;
+        }
+
+        .demo-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+            backdrop-filter: blur(2px);
+        }
+
+        .demo-play-button {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(180deg, var(--brand-2), var(--brand));
+            border: none;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 12px 35px rgba(168, 85, 247, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-play-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .demo-play-button:hover::before {
+            width: 120px;
+            height: 120px;
+        }
+
+        .demo-play-button:hover {
+            transform: scale(1.15);
+            box-shadow: 0 20px 50px rgba(168, 85, 247, 0.7);
+        }
+
+        .demo-play-button:active {
+            transform: scale(1.05);
+        }
+
+        .demo-text {
+            color: var(--muted);
+            font-size: 20px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 80px;
+        }
+
+        .tech-item {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tech-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .tech-item:hover::before {
+            left: 100%;
+        }
+
+        .tech-item:hover {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.1));
+            border-color: var(--brand);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(168, 85, 247, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 80px 20px 60px;
+            }
+
+            .features-section,
+            .demo-section {
+                padding: 60px 20px;
+            }
+
+            .cta-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .cta-primary,
+            .cta-secondary {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .demo-container {
+                transform: none;
+            }
+
+            .demo-container:hover {
+                transform: scale(1.02);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Additional Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        .stagger-1 {
+            animation-delay: 0.1s;
+        }
+
+        .stagger-2 {
+            animation-delay: 0.2s;
+        }
+
+        .stagger-3 {
+            animation-delay: 0.3s;
+        }
+
+        .stagger-4 {
+            animation-delay: 0.4s;
+        }
+
+        .stagger-5 {
+            animation-delay: 0.5s;
+        }
+
+        .stagger-6 {
+            animation-delay: 0.6s;
+        }
+
+        /* Glow effects */
+        .glow-text {
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+        }
+
+        /* Magnetic button effect */
+        .magnetic-btn {
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Loading animation */
+        .pulse-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--brand);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .pulse-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .pulse-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="app">
-        <header class="topbar">
-            <h1>Music Player</h1>
-            <div class="top-actions">
-                <select id="languageSelect" class="lang-select" aria-label="Select Language">
-                    <option value="en">EN</option>
-                    <option value="es">ES</option>
-                </select>
-                <a href="#player" class="chip active" id="navPlayer">Player</a>
-                <a href="#library" class="chip" id="navLibrary">Library</a>
-            </div>
-        </header>
+    <!-- Animated Background Elements -->
+    <div class="gradient-orb orb1"></div>
+    <div class="gradient-orb orb2"></div>
+    <div class="gradient-orb orb3"></div>
 
-        <main class="content" id="playerView">
-            <aside class="sidebar">
-                <div class="sidebar-head">
-                    <div class="sidebar-title">
-                        <span class="icon">🎵</span>
-                        <span>Playlist</span>
-                    </div>
-                    <div style="display: flex; gap: 5px;">
-                        <button id="importPlaylistBtn" class="icon-btn" title="Import Playlist">📥</button>
-                        <button id="exportPlaylistBtn" class="icon-btn" title="Export Playlist">📤</button>
-                        <button id="createPlaylist" class="icon-btn" title="New playlist">＋</button>
-                    </div>
-                </div>
-                <nav id="playlistList" class="playlist-list" aria-label="Playlists">
-                    <!-- dynamic items -->
-                </nav>
-            </aside>
+    <div class="particles" id="particles"></div>
 
-            <section class="panel">
-                <div class="panel-head">
-                    <h2 id="currentPlaylistName">All Songs</h2>
-                    <div>
-                        <button id="addSongs" class="btn">
-                            <span class="icon">☰</span>
-                            Add Songs
-                        </button>
-                        <input id="filePicker" type="file" accept="audio/*" multiple hidden />
-                        <input id="playlistImportPicker" type="file" accept=".json" hidden />
-                    </div>
-                </div>
-                <ul id="trackList" class="track-list" aria-label="Current Playlist">
-                    <!-- dynamic tracks -->
-                </ul>
-            </section>
-        </main>
+    <div class="landing-container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h1 class="hero-title">Web Audio Player</h1>
+            <p class="hero-subtitle">
+                Experience music like never before. A powerful offline audio player with stunning visualizations,
+                playlist management, and modern design—all in your browser.
+            </p>
 
-        <section id="libraryView" class="library hidden" aria-label="Library">
-            <div class="searchbar-wrap">
-                <input id="librarySearch" class="searchbar" type="search" placeholder="Search tracks, artists..."
-                    aria-label="Search Library" />
-                <select id="librarySort" class="searchbar" style="width: auto; margin-left: 10px; cursor: pointer;"
-                    aria-label="Sort Library">
-                    <option value="dateAdded-desc">Recently Added</option>
-                    <option value="title-asc">A-Z</option>
-                    <option value="title-desc">Z-A</option>
-                    <option value="artist-asc">Artist</option>
-                </select>
-                <button id="clearLibraryBtn" class="btn btn-danger" style="margin-left: 10px;">Clear Library</button>
-            </div>
-            <div id="libraryGrid" class="library-grid" aria-live="polite" role="list"></div>
-            <div id="paginationControls" class="pagination-controls"
-                style="display: flex; justify-content: center; align-items: center; gap: 15px; padding: 20px;">
-                <button id="libPrevBtn" class="btn" disabled>Previous</button>
-                <span id="libPageInfo" style="color: #cbd5e1;">Page 1 of 1</span>
-                <button id="libNextBtn" class="btn">Next</button>
+            <div class="cta-container">
+                <a href="player.html" class="cta-primary">
+                    <span>🎵</span>
+                    Launch Player
+                </a>
+                <a href="#features" class="cta-secondary">
+                    <span>✨</span>
+                    Explore Features
+                </a>
             </div>
         </section>
 
-        <footer class="player" aria-label="Audio Player">
-            <canvas id="visualizer" height="60" aria-hidden="true"></canvas>
-            <div class="timeline" aria-label="Timeline">
-                <div class="time" id="currentTime">0:00</div>
-                <input id="seek" type="range" min="0" max="1000" value="0" aria-label="Seek Slider" />
-                <div class="time" id="duration">0:00</div>
-            </div>
-            <div class="nowbar" role="region" aria-label="Playback Controls">
-                <div class="now-left">
-                    <img id="cover" class="cover" src="assets/default-cover.png" alt="cover" />
-                    <div>
-                        <div id="nowTitle" class="title">—</div>
-                        <div id="nowArtist" class="artist">—</div>
-                    </div>
+        <!-- Features Section -->
+        <section id="features" class="features-section">
+            <h2 class="section-title">Powerful Features</h2>
+
+            <div class="features-grid">
+                <div class="feature-card fade-in stagger-1">
+                    <span class="feature-icon">🌐</span>
+                    <h3 class="feature-title">Offline First</h3>
+                    <p class="feature-description">
+                        Works completely offline. No internet connection required once loaded.
+                        Your music follows you anywhere.
+                    </p>
                 </div>
 
-                <div class="controls">
-                    <button id="muteBtn" class="icon-btn" title="Mute">🔇</button>
-                    <button id="prevBtn" class="icon-btn" title="Previous">⏮</button>
-                    <button id="playPauseBtn" class="play">▶</button>
-                    <button id="nextBtn" class="icon-btn" title="Next">⏭</button>
-                    <button id="repeatBtn" class="icon-btn" title="Repeat">🔁</button>
+                <div class="feature-card fade-in stagger-2">
+                    <span class="feature-icon">🎨</span>
+                    <h3 class="feature-title">Waveform Visualization</h3>
+                    <p class="feature-description">
+                        Beautiful real-time audio visualizations using Canvas API.
+                        See your music come to life.
+                    </p>
                 </div>
 
-                <div class="volume">
-                    <select id="speedSelect" class="speed-select" aria-label="Playback Speed">
-                        <option value="0.5">0.5x</option>
-                        <option value="0.75">0.75x</option>
-                        <option value="1" selected>1x</option>
-                        <option value="1.25">1.25x</option>
-                        <option value="1.5">1.5x</option>
-                        <option value="2">2x</option>
-                    </select>
-                    <span>🔊</span>
-                    <input id="volume" type="range" min="0" max="1" step="0.01" value="0.7"
-                        aria-label="Volume Slider" />
+                <div class="feature-card fade-in stagger-3">
+                    <span class="feature-icon">📱</span>
+                    <h3 class="feature-title">Responsive Design</h3>
+                    <p class="feature-description">
+                        Perfectly optimized for desktop, tablet, and mobile devices.
+                        Enjoy your music on any screen size.
+                    </p>
+                </div>
+
+                <div class="feature-card fade-in stagger-4">
+                    <span class="feature-icon">📚</span>
+                    <h3 class="feature-title">Playlist Management</h3>
+                    <p class="feature-description">
+                        Create, edit, and organize playlists with ease.
+                        Import/export your collections as JSON files.
+                    </p>
+                </div>
+
+                <div class="feature-card fade-in stagger-5">
+                    <span class="feature-icon">⚡</span>
+                    <h3 class="feature-title">Advanced Controls</h3>
+                    <p class="feature-description">
+                        Playback speed control, volume adjustment, repeat modes,
+                        and precise seeking with waveform scrubber.
+                    </p>
+                </div>
+
+                <div class="feature-card fade-in stagger-6">
+                    <span class="feature-icon">🔒</span>
+                    <h3 class="feature-title">Privacy First</h3>
+                    <p class="feature-description">
+                        Everything runs locally in your browser.
+                        No data sent to servers, no tracking, complete privacy.
+                    </p>
                 </div>
             </div>
-            <audio id="audio"></audio>
-        </footer>
+        </section>
+
+        <!-- Demo Section -->
+        <section class="demo-section">
+            <h2 class="section-title">See It In Action</h2>
+
+            <div class="demo-container">
+                <div class="demo-overlay">
+                    <button class="demo-play-button" onclick="window.location.href='player.html'">▶</button>
+                    <p class="demo-text">Click to try the live demo</p>
+                </div>
+
+                <!-- Embedded preview of the actual player -->
+                <div class="demo-player">
+                    <header class="topbar">
+                        <h1>Music Player</h1>
+                        <div class="top-actions">
+                            <select class="lang-select" aria-label="Select Language">
+                                <option value="en">EN</option>
+                                <option value="es">ES</option>
+                            </select>
+                            <a href="#player" class="chip active">Player</a>
+                            <a href="#library" class="chip">Library</a>
+                        </div>
+                    </header>
+
+                    <main class="content">
+                        <aside class="sidebar">
+                            <div class="sidebar-head">
+                                <div class="sidebar-title">
+                                    <span class="icon">🎵</span>
+                                    <span>Playlist</span>
+                                </div>
+                                <div style="display: flex; gap: 5px;">
+                                    <button class="icon-btn" title="Import Playlist">📥</button>
+                                    <button class="icon-btn" title="Export Playlist">📤</button>
+                                    <button class="icon-btn" title="New playlist">＋</button>
+                                </div>
+                            </div>
+                            <nav class="playlist-list">
+                                <div class="playlist-item active">
+                                    <span>All Songs</span>
+                                    <span>12 tracks</span>
+                                </div>
+                                <div class="playlist-item">
+                                    <span>Favorites</span>
+                                    <span>5 tracks</span>
+                                </div>
+                            </nav>
+                        </aside>
+
+                        <section class="panel">
+                            <div class="panel-head">
+                                <h2>All Songs</h2>
+                                <button class="btn">
+                                    <span class="icon">☰</span>
+                                    Add Songs
+                                </button>
+                            </div>
+                            <ul class="track-list">
+                                <li class="track active">
+                                    <div class="meta">
+                                        <img src="assets/default-cover.png" alt="cover" />
+                                        <div>
+                                            <div class="title">Sample Track</div>
+                                            <div class="artist">Artist Name</div>
+                                        </div>
+                                    </div>
+                                    <span class="len">3:45</span>
+                                </li>
+                                <li class="track">
+                                    <div class="meta">
+                                        <img src="assets/default-cover.png" alt="cover" />
+                                        <div>
+                                            <div class="title">Another Song</div>
+                                            <div class="artist">Another Artist</div>
+                                        </div>
+                                    </div>
+                                    <span class="len">4:20</span>
+                                </li>
+                            </ul>
+                        </section>
+                    </main>
+
+                    <footer class="player">
+                        <canvas id="visualizer" height="60"
+                            style="background: linear-gradient(90deg, rgba(236, 72, 153, 0.3), rgba(168, 85, 247, 0.3));"></canvas>
+                        <div class="timeline">
+                            <div class="time">1:23</div>
+                            <input type="range" min="0" max="1000" value="300" />
+                            <div class="time">3:45</div>
+                        </div>
+                        <div class="nowbar">
+                            <div class="now-left">
+                                <img class="cover" src="assets/default-cover.png" alt="cover" />
+                                <div>
+                                    <div class="title">Sample Track</div>
+                                    <div class="artist">Artist Name</div>
+                                </div>
+                            </div>
+                            <div class="controls">
+                                <button class="icon-btn">🔇</button>
+                                <button class="icon-btn">⏮</button>
+                                <button class="play">⏸</button>
+                                <button class="icon-btn">⏭</button>
+                                <button class="icon-btn">🔁</button>
+                            </div>
+                            <div class="volume">
+                                <span>🔊</span>
+                                <input type="range" min="0" max="1" step="0.01" value="0.7" />
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tech Stack -->
+        <section class="features-section">
+            <h2 class="section-title">Built With Modern Technology</h2>
+
+            <div class="tech-stack">
+                <div class="tech-item fade-in stagger-1">HTML5 Audio API</div>
+                <div class="tech-item fade-in stagger-2">Web Audio API</div>
+                <div class="tech-item fade-in stagger-3">Canvas API</div>
+                <div class="tech-item fade-in stagger-4">IndexedDB</div>
+                <div class="tech-item fade-in stagger-5">Service Workers</div>
+                <div class="tech-item fade-in stagger-6">ES6+ Modules</div>
+                <div class="tech-item fade-in stagger-1">CSS Grid & Flexbox</div>
+                <div class="tech-item fade-in stagger-2">PWA Technologies</div>
+            </div>
+        </section>
+
+        <!-- Final CTA -->
+        <section class="hero-section">
+            <h2 class="hero-title" style="font-size: clamp(36px, 5vw, 64px);">Ready to Experience Music?</h2>
+            <p class="hero-subtitle">
+                Join thousands of users enjoying a better way to listen to music offline.
+            </p>
+
+            <div class="cta-container">
+                <a href="index.html" class="cta-primary">
+                    <span>🚀</span>
+                    Start Playing Now
+                </a>
+            </div>
+        </section>
     </div>
-    <div id="ctxMenu" class="ctx-menu" role="menu" aria-hidden="true"></div>
-    <div id="snackbar" class="snackbar" role="status" aria-live="polite">
-        <span id="snackbarMsg"></span>
-        <button id="snackbarUndo" class="action">Undo</button>
-    </div>
-    <script src="js/app.js" type="module"></script>
+
+    <script>
+        // Generate particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Initialize particles on load
+        createParticles();
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add parallax effect on scroll
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero-section');
+            const orbs = document.querySelectorAll('.gradient-orb');
+
+            if (hero) {
+                hero.style.transform = `translateY(${scrolled * 0.3}px)`;
+                hero.style.opacity = 1 - scrolled / 800;
+            }
+
+            // Parallax for orbs
+            orbs.forEach((orb, index) => {
+                const speed = 0.5 + (index * 0.1);
+                orb.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        });
+
+        // Animate feature cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all feature cards and tech items
+        document.querySelectorAll('.feature-card, .tech-item').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+
+        // Magnetic button effect
+        document.querySelectorAll('.cta-primary, .cta-secondary').forEach(btn => {
+            btn.addEventListener('mousemove', (e) => {
+                const rect = btn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+
+                btn.style.transform = `translateY(-4px) translateX(${x * 0.1}px) translateY(${y * 0.1}px) scale(1.02)`;
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'translateY(-4px) scale(1.02)';
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Music Player</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <div class="app">
+        <header class="topbar">
+            <h1>Music Player</h1>
+            <div class="top-actions">
+                <select id="languageSelect" class="lang-select" aria-label="Select Language">
+                    <option value="en">EN</option>
+                    <option value="es">ES</option>
+                </select>
+                <a href="#player" class="chip active" id="navPlayer">Player</a>
+                <a href="#library" class="chip" id="navLibrary">Library</a>
+            </div>
+        </header>
+
+        <main class="content" id="playerView">
+            <aside class="sidebar">
+                <div class="sidebar-head">
+                    <div class="sidebar-title">
+                        <span class="icon">🎵</span>
+                        <span>Playlist</span>
+                    </div>
+                    <div style="display: flex; gap: 5px;">
+                        <button id="importPlaylistBtn" class="icon-btn" title="Import Playlist">📥</button>
+                        <button id="exportPlaylistBtn" class="icon-btn" title="Export Playlist">📤</button>
+                        <button id="createPlaylist" class="icon-btn" title="New playlist">＋</button>
+                    </div>
+                </div>
+                <nav id="playlistList" class="playlist-list" aria-label="Playlists">
+                    <!-- dynamic items -->
+                </nav>
+            </aside>
+
+            <section class="panel">
+                <div class="panel-head">
+                    <h2 id="currentPlaylistName">All Songs</h2>
+                    <div>
+                        <button id="addSongs" class="btn">
+                            <span class="icon">☰</span>
+                            Add Songs
+                        </button>
+                        <input id="filePicker" type="file" accept="audio/*" multiple hidden />
+                        <input id="playlistImportPicker" type="file" accept=".json" hidden />
+                    </div>
+                </div>
+                <ul id="trackList" class="track-list" aria-label="Current Playlist">
+                    <!-- dynamic tracks -->
+                </ul>
+            </section>
+        </main>
+
+        <section id="libraryView" class="library hidden" aria-label="Library">
+            <div class="searchbar-wrap">
+                <input id="librarySearch" class="searchbar" type="search" placeholder="Search tracks, artists..."
+                    aria-label="Search Library" />
+                <select id="librarySort" class="searchbar" style="width: auto; margin-left: 10px; cursor: pointer;"
+                    aria-label="Sort Library">
+                    <option value="dateAdded-desc">Recently Added</option>
+                    <option value="title-asc">A-Z</option>
+                    <option value="title-desc">Z-A</option>
+                    <option value="artist-asc">Artist</option>
+                </select>
+                <button id="clearLibraryBtn" class="btn btn-danger" style="margin-left: 10px;">Clear Library</button>
+            </div>
+            <div id="libraryGrid" class="library-grid" aria-live="polite" role="list"></div>
+            <div id="paginationControls" class="pagination-controls"
+                style="display: flex; justify-content: center; align-items: center; gap: 15px; padding: 20px;">
+                <button id="libPrevBtn" class="btn" disabled>Previous</button>
+                <span id="libPageInfo" style="color: #cbd5e1;">Page 1 of 1</span>
+                <button id="libNextBtn" class="btn">Next</button>
+            </div>
+        </section>
+
+        <footer class="player" aria-label="Audio Player">
+            <canvas id="visualizer" height="60" aria-hidden="true"></canvas>
+            <div class="timeline" aria-label="Timeline">
+                <div class="time" id="currentTime">0:00</div>
+                <input id="seek" type="range" min="0" max="1000" value="0" aria-label="Seek Slider" />
+                <div class="time" id="duration">0:00</div>
+            </div>
+            <div class="nowbar" role="region" aria-label="Playback Controls">
+                <div class="now-left">
+                    <img id="cover" class="cover" src="assets/default-cover.png" alt="cover" />
+                    <div>
+                        <div id="nowTitle" class="title">—</div>
+                        <div id="nowArtist" class="artist">—</div>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button id="muteBtn" class="icon-btn" title="Mute">🔇</button>
+                    <button id="prevBtn" class="icon-btn" title="Previous">⏮</button>
+                    <button id="playPauseBtn" class="play">▶</button>
+                    <button id="nextBtn" class="icon-btn" title="Next">⏭</button>
+                    <button id="repeatBtn" class="icon-btn" title="Repeat">🔁</button>
+                </div>
+
+                <div class="volume">
+                    <select id="speedSelect" class="speed-select" aria-label="Playback Speed">
+                        <option value="0.5">0.5x</option>
+                        <option value="0.75">0.75x</option>
+                        <option value="1" selected>1x</option>
+                        <option value="1.25">1.25x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="2">2x</option>
+                    </select>
+                    <span>🔊</span>
+                    <input id="volume" type="range" min="0" max="1" step="0.01" value="0.7"
+                        aria-label="Volume Slider" />
+                </div>
+            </div>
+            <audio id="audio"></audio>
+        </footer>
+    </div>
+    <div id="ctxMenu" class="ctx-menu" role="menu" aria-hidden="true"></div>
+    <div id="snackbar" class="snackbar" role="status" aria-live="polite">
+        <span id="snackbarMsg"></span>
+        <button id="snackbarUndo" class="action">Undo</button>
+    </div>
+    <script src="js/app.js" type="module"></script>
+</body>
+
+</html>
