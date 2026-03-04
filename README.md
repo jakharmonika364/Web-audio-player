@@ -17,7 +17,7 @@ Most audio players require internet connectivity or backend support. This projec
 
 ### Must-Have Features
 
-- Play, pause, skip, and seek through songs
+- Play, pause, skip, repeat and seek through songs
 - Waveform scrubber using Canvas API
 - Playlist management (Add/Remove tracks, sorting, pagination)
 - Responsive UI (Mobile + Desktop)
